@@ -1,25 +1,35 @@
 <?php
 $postdata = json_decode(file_get_contents("php://input"), true);
 if ($postdata['env'] === "production") {
-    $api_url = "http://api.legalib.org/";
-    $site_url = "http://legalib.org/";
+    $env = array(
+        "api_url" => "http://api.legalib.org/",
+        "site_url" => "http://legalib.org/",
+        "environnement" => "Production",
+        "api_key" => "API",
+        "front_key" => "FRONT",
+    );
 } else {
-    $api_url = "http://api.preprod.legalib.org/";
-    $site_url = "http://app.preprod.legalib.org/";
+    $env = array(
+        "api_url" => "http://api.preprod.legalib.org/",
+        "site_url" => "http://app.preprod.legalib.org/",
+        "environnement" => "Preprod",
+        "api_key" => "API_PREPROD",
+        "front_key" => "FRONT_PREPROD",
+    );
 }
 
 switch ($postdata['tile']) {
     case 'API':
-        reloadAPI($api_url);
+        reloadAPI($env);
         break;
 
     case 'FRONT':
-        reloadFront($site_url);
+        reloadFront($env);
         break;
 }
 
-function reloadAPI($api_url) {
-    $ch = curl_init($api_url . "ping/api");
+function reloadAPI($env) {
+    $ch = curl_init($env['api_url'] . "ping/api");
     curl_setopt($ch, CURLOPT_CUSTOMREQUEST, "GET");
     curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
     curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, true);
@@ -36,11 +46,11 @@ function reloadAPI($api_url) {
     }
     $data = array(
         "tile" => "just_value",
-        "key" => "API",
+        "key" => $env['api_key'],
         "data" =>json_encode(
             array(
                 "title"=> "Etat de l'API",
-                "description"=> "production",
+                "description"=> $env['environnement'],
                 "just-value" => $state
             )
         )
@@ -48,8 +58,8 @@ function reloadAPI($api_url) {
     updateData($data);
 }
 
-function reloadFront($site_url) {
-    $ch = curl_init($site_url);
+function reloadFront($env) {
+    $ch = curl_init($env['site_url']);
     curl_setopt($ch, CURLOPT_CUSTOMREQUEST, "GET");
     curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
     curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, true);
@@ -67,11 +77,11 @@ function reloadFront($site_url) {
 
     $data = array(
         "tile" => "just_value",
-        "key" => "FRONT",
+        "key" => $env['front_key'],
         "data" =>json_encode(
             array(
                 "title"=> "Etat du front",
-                "description"=> "production",
+                "description"=> $env['environnement'],
                 "just-value" => $state
             )
         )
