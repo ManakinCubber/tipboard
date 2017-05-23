@@ -14,7 +14,7 @@ switch ($postdata['tile']) {
         break;
 
     case 'FRONT':
-        reloadAPI($site_url);
+        reloadFront($site_url);
         break;
 }
 
@@ -58,10 +58,12 @@ function reloadFront($site_url) {
         $data = array(
             "tile" => "just_value",
             "key" => "FRONT",
-            "data" => array(
-                "title"=> "Etat du front",
-                "description"=> "production",
-                "just-value" => "UP"
+            "data" =>json_encode(
+                array(
+                    "title"=> "Etat du front",
+                    "description"=> "production",
+                    "just-value" => "UP"
+                )
             )
         );
     }
@@ -69,10 +71,9 @@ function reloadFront($site_url) {
 }
 
 function updateData($data_received) {
-    $data = "payload=" . json_encode($data_received);
     $ch = curl_init("http://dash.legalib.org:7272/api/v0.1/1523223fdfa24d6489b0d9b623e697a7/push");
     curl_setopt($ch, CURLOPT_CUSTOMREQUEST, "POST");
-    curl_setopt($ch, CURLOPT_POSTFIELDS, $data);
+    curl_setopt($ch, CURLOPT_POSTFIELDS, http_build_query($data_received));
     curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
     curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, true);
     curl_setopt($ch, CURLOPT_SSL_VERIFYHOST, 2);
