@@ -30,16 +30,21 @@ function reloadAPI($api_url) {
     curl_close($ch);
 
     if ($httpcode === 204) {
-        $data = array(
-            "tile" => "just_value",
-            "key" => "API",
-            "data" => array(
+        $state = "UP";
+    } else {
+        $state = "DOWN";
+    }
+    $data = array(
+        "tile" => "just_value",
+        "key" => "API",
+        "data" =>json_encode(
+            array(
                 "title"=> "Etat de l'API",
                 "description"=> "production",
-                "just-value" => "UP"
+                "just-value" => $state
             )
-        );
-    }
+        )
+    );
     updateData($data);
 }
 
@@ -55,18 +60,22 @@ function reloadFront($site_url) {
     curl_close($ch);
 
     if ($httpcode === 200) {
-        $data = array(
-            "tile" => "just_value",
-            "key" => "FRONT",
-            "data" =>json_encode(
-                array(
-                    "title"=> "Etat du front",
-                    "description"=> "production",
-                    "just-value" => "UP"
-                )
-            )
-        );
+        $state = "UP";
+    } else {
+        $state = "DOWN";
     }
+
+    $data = array(
+        "tile" => "just_value",
+        "key" => "FRONT",
+        "data" =>json_encode(
+            array(
+                "title"=> "Etat du front",
+                "description"=> "production",
+                "just-value" => $state
+            )
+        )
+    );
     updateData($data);
 }
 
