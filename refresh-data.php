@@ -24,18 +24,22 @@ if ($postdata['env'] === "production") {
 
 switch ($postdata['tile']) {
     case 'API':
+        $env['key'] = $env['api_key'];
         reloadAPI($env);
         break;
 
     case 'DATABASE':
+        $env['key'] = $env['db_key'];
         reloadDatabase($env);
         break;
 
     case 'FRONT':
+        $env['key'] = $env['front_key'];
         reloadFront($env);
         break;
 
     case 'INFO':
+        $env['key'] = $env['info_key'];
         reloadInfo($env);
         break;
 }
@@ -58,7 +62,7 @@ function reloadAPI($env) {
     }
     $data = array(
         "tile" => "just_value",
-        "key" => $env['api_key'],
+        "key" => $env['key'],
         "data" =>json_encode(
             array(
                 "title"=> "Etat de l'API",
@@ -68,6 +72,7 @@ function reloadAPI($env) {
         )
     );
     updateData($data);
+    setConfig($state, $env);
 }
 
 function reloadDatabase($env) {
@@ -88,7 +93,7 @@ function reloadDatabase($env) {
     }
     $data = array(
         "tile" => "just_value",
-        "key" => $env['db_key'],
+        "key" => $env['key'],
         "data" =>json_encode(
             array(
                 "title"=> "Etat de la base de donnée",
@@ -98,6 +103,7 @@ function reloadDatabase($env) {
         )
     );
     updateData($data);
+    setConfig($state, $env);
 }
 
 function reloadFront($env) {
@@ -119,7 +125,7 @@ function reloadFront($env) {
 
     $data = array(
         "tile" => "just_value",
-        "key" => $env['front_key'],
+        "key" => $env['key'],
         "data" =>json_encode(
             array(
                 "title"=> "Etat du front",
@@ -129,6 +135,7 @@ function reloadFront($env) {
         )
     );
     updateData($data);
+    setConfig($state, $env);
 }
 
 function reloadInfo($env) {
@@ -147,7 +154,7 @@ function reloadInfo($env) {
     }
     $data = array(
         "tile" => "text",
-        "key" => $env['info_key'],
+        "key" => $env['key'],
         "data" =>json_encode(
             array(
                 "text" => "<h2 id='INFO-title' class='result big-result fixed-height'>Informations</h2><h3 id='INFO-description' class='result label fixed-height'>" . $env['environnement'] . "</h3>" . $result
@@ -161,6 +168,34 @@ function updateData($data_received) {
     $ch = curl_init("http://dash.legalib.org:7272/api/v0.1/1523223fdfa24d6489b0d9b623e697a7/push");
     curl_setopt($ch, CURLOPT_CUSTOMREQUEST, "POST");
     curl_setopt($ch, CURLOPT_POSTFIELDS, http_build_query($data_received));
+    curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+    curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, true);
+    curl_setopt($ch, CURLOPT_SSL_VERIFYHOST, 2);
+    curl_setopt($ch, CURLOPT_HEADER, true);
+    $result = curl_exec($ch);
+    curl_close($ch);
+}
+
+function setConfig($state, $env) {
+    if($state === "DOWN") {
+        $color = "red";
+        $fade = true;
+    } elseif ($state === "UP") {
+        $color = "green";
+        $fade = false;
+    }
+
+    $data = array(
+        "value" =>json_encode(
+            array(
+                "just-value-color" => $color,
+                "fading_background"=> $fade
+            )
+        )
+    );
+    $ch = curl_init("http://dash.legalib.org:7272/api/v0.1/1523223fdfa24d6489b0d9b623e697a7/tileconfig/" . $env['key']);
+    curl_setopt($ch, CURLOPT_CUSTOMREQUEST, "POST");
+    curl_setopt($ch, CURLOPT_POSTFIELDS, http_build_query($data));
     curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
     curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, true);
     curl_setopt($ch, CURLOPT_SSL_VERIFYHOST, 2);
