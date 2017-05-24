@@ -6,6 +6,7 @@ if ($postdata['env'] === "production") {
         "site_url" => "http://legalib.org/",
         "environnement" => "Production",
         "api_key" => "API",
+        "db_key" => "DATABASE",
         "front_key" => "FRONT",
     );
 } else {
@@ -14,6 +15,7 @@ if ($postdata['env'] === "production") {
         "site_url" => "http://app.preprod.legalib.org/",
         "environnement" => "Preprod",
         "api_key" => "API_PREPROD",
+        "db_key" => "DATABASE_PREPROD",
         "front_key" => "FRONT_PREPROD",
     );
 }
@@ -21,6 +23,10 @@ if ($postdata['env'] === "production") {
 switch ($postdata['tile']) {
     case 'API':
         reloadAPI($env);
+        break;
+
+    case 'DATABASE':
+        reloadDatabase($env);
         break;
 
     case 'FRONT':
@@ -50,6 +56,36 @@ function reloadAPI($env) {
         "data" =>json_encode(
             array(
                 "title"=> "Etat de l'API",
+                "description"=> $env['environnement'],
+                "just-value" => $state
+            )
+        )
+    );
+    updateData($data);
+}
+
+function reloadDatabase($env) {
+    $ch = curl_init($env['api_url'] . "ping/db");
+    curl_setopt($ch, CURLOPT_CUSTOMREQUEST, "GET");
+    curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+    curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, true);
+    curl_setopt($ch, CURLOPT_SSL_VERIFYHOST, 2);
+    curl_setopt($ch, CURLOPT_HEADER, true);
+    $result = curl_exec($ch);
+    $httpcode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
+    curl_close($ch);
+
+    if ($httpcode === 204) {
+        $state = "UP";
+    } else {
+        $state = "DOWN";
+    }
+    $data = array(
+        "tile" => "just_value",
+        "key" => $env['db_key'],
+        "data" =>json_encode(
+            array(
+                "title"=> "Etat de la base de donnée",
                 "description"=> $env['environnement'],
                 "just-value" => $state
             )
