@@ -144,7 +144,7 @@ function reloadInfo($env) {
     curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
     curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, true);
     curl_setopt($ch, CURLOPT_SSL_VERIFYHOST, 2);
-    curl_setopt($ch, CURLOPT_HEADER, true);
+    curl_setopt($ch, CURLOPT_HEADER, false);
     $result = curl_exec($ch);
     $httpcode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
     curl_close($ch);
@@ -157,7 +157,7 @@ function reloadInfo($env) {
         "key" => $env['key'],
         "data" =>json_encode(
             array(
-                "text" => "<h2 id='INFO-title' class='result big-result fixed-height'>Informations</h2><h3 id='INFO-description' class='result label fixed-height'>" . $env['environnement'] . "</h3>" . $result
+                "text" => "<h2 id='INFO-title' class='result big-result fixed-height'>Informations</h2><h3 id='INFO-description' class='result label fixed-height'>" . $env['environnement'] . "</h3></br>Dernier commit: " . $result
             )
         )
     );
