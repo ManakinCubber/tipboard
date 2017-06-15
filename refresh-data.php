@@ -2,8 +2,8 @@
 $postdata = json_decode(file_get_contents("php://input"), true);
 if ($postdata['env'] === "production") {
     $env = array(
-        "api_url" => "http://api.legalib.org/",
-        "site_url" => "http://legalib.org/",
+        "api_url" => "https://api.legalib.org/",
+        "site_url" => "https://legalib.org/",
         "environnement" => "Production",
         "api_key" => "API",
         "db_key" => "DATABASE",
@@ -12,8 +12,8 @@ if ($postdata['env'] === "production") {
     );
 } else {
     $env = array(
-        "api_url" => "http://api.preprod.legalib.org/",
-        "site_url" => "http://app.preprod.legalib.org/",
+        "api_url" => "https://api.preprod.legalib.org/",
+        "site_url" => "https://app.preprod.legalib.org/",
         "environnement" => "Preprod",
         "api_key" => "API_PREPROD",
         "db_key" => "DATABASE_PREPROD",
