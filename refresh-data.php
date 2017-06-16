@@ -74,7 +74,7 @@ function reloadAPI($env) {
         )
     );
     updateData($data);
-    setConfig($state, $env);
+    setConfig("just_value", array($state), $env);
 }
 
 function reloadDatabase($env) {
@@ -105,7 +105,7 @@ function reloadDatabase($env) {
         )
     );
     updateData($data);
-    setConfig($state, $env);
+    setConfig("just_value", array($state), $env);
 }
 
 function reloadFront($env) {
@@ -153,22 +153,25 @@ function reloadFront($env) {
         "data" =>json_encode(
             array(
                 array(
-                    "label" => "Etat du front",
+                    "label" => "Etat du front: ",
                     "text" => $state ? "OK" : "Not OK"
                 ),
                 array(
-                    "label" => "apiBaseUrl",
+                    "label" => "apiBaseUrl: ",
                     "text" => $current_env->apiBaseUrl
                 ),
                 array(
-                    "label" => "apiDocumentUrl",
+                    "label" => "apiDocumentUrl: ",
                     "text" => $current_env->apiDocumentUrl
                 )
             )
         )
     );
+
+    $states = array($state, $api_state, $api_document_state);
+
     updateData($data);
-    //setConfig($state, $env);
+    setConfig("fancy_listing", $states, $env);
 }
 
 function reloadInfo($env) {
@@ -209,23 +212,40 @@ function updateData($data_received) {
     curl_close($ch);
 }
 
-function setConfig($state, $env) {
-    if($state === "DOWN") {
-        $color = "red";
-        $fade = true;
-    } elseif ($state === "UP") {
-        $color = "green";
-        $fade = false;
+function setConfig($template, $states, $env) {
+    if ($template === "just_value") {
+        if($states[0] === "DOWN") {
+            $color = "red";
+            $fade = true;
+        } elseif ($states[0] === "UP") {
+            $color = "green";
+            $fade = false;
+        }
+
+        $data = array(
+            "value" =>json_encode(
+                array(
+                    "just-value-color" => $color,
+                    "fading_background"=> $fade
+                )
+            )
+        );
+    } elseif ($template === "fancy_listing") {
+
+        $value = array(
+            "vertical_center" => true
+        );
+
+        foreach ($states as $key => $state) {
+            $value[$key + 1] = $state ? array("label_color"=> "green", "center"=> true) : array("label_color"=> "red", "center"=> true);
+        }
+
+        $value = json_encode($value);
+        $data = array(
+            "value" => $value
+        );
     }
 
-    $data = array(
-        "value" =>json_encode(
-            array(
-                "just-value-color" => $color,
-                "fading_background"=> $fade
-            )
-        )
-    );
     $ch = curl_init("http://dash.legalib.org:7272/api/v0.1/1523223fdfa24d6489b0d9b623e697a7/tileconfig/" . $env['key']);
     curl_setopt($ch, CURLOPT_CUSTOMREQUEST, "POST");
     curl_setopt($ch, CURLOPT_POSTFIELDS, http_build_query($data));
