@@ -1,5 +1,10 @@
 <?php
 $postdata = json_decode(file_get_contents("php://input"), true);
+$info = array(
+    "commit" => $postdata['commit'] ? $postdata['commit'] : "Inconnu",
+    "branch" => $postdata['branch'] ? $postdata['branch'] : "Inconnu",
+    "user" => $postdata['user'] ? $postdata['user'] : "Inconnu",
+);
 if ($postdata['env'] === "production") {
     $env = array(
         "api_url" => "https://api.legalib.org",
@@ -44,7 +49,7 @@ switch ($postdata['tile']) {
 
     case 'INFO':
         $env['key'] = $env['info_key'];
-        reloadInfo($env);
+        reloadInfo($env, $info);
         break;
 }
 
@@ -186,7 +191,7 @@ function reloadFront($env) {
     setConfig("fancy_listing", $states, $env);
 }
 
-function reloadInfo($env) {
+function reloadInfo($env, $info) {
     $ch = curl_init($env['api_url'] . "/info");
     curl_setopt($ch, CURLOPT_CUSTOMREQUEST, "GET");
     curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
@@ -201,15 +206,35 @@ function reloadInfo($env) {
         $result = "No data";
     }
     $data = array(
-        "tile" => "text",
+        "tile" => "fancy_listing",
         "key" => $env['key'],
         "data" =>json_encode(
             array(
-                "text" => "<h2 id='INFO-title' class='result big-result fixed-height'>Informations</h2><h3 id='INFO-description' class='result label fixed-height'>" . $env['environnement'] . "</h3></br>Dernier commit: " . $result
+                array(
+
+                    "label" => "Dernier commit: ",
+                    "text" => $info['commit']
+                ),
+                array(
+                    "label" => "Utilisateur: ",
+                    "text" => $info['user']
+                ),
+                array(
+                    "label" => "Branche: ",
+                    "text" => $info['branch']
+                ),
+                array(
+                    "label" => "Date de déploiement: ",
+                    "text" => date("d/m/Y H:i:s")
+                )
             )
         )
     );
+
+    $states = array(true, true, true, true);
+
     updateData($data);
+    setConfig("fancy_listing", $states, $env);
 }
 
 function updateData($data_received) {
