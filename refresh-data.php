@@ -4,6 +4,7 @@ if ($postdata['env'] === "production") {
     $env = array(
         "api_url" => "https://api.legalib.org",
         "api_document_url" => "http://document.manakin.fr",
+        "s3_container" => "legalib",
         "site_url" => "https://legalib.org",
         "environnement" => "Production",
         "api_key" => "API",
@@ -15,6 +16,7 @@ if ($postdata['env'] === "production") {
     $env = array(
         "api_url" => "https://api.preprod.legalib.org",
         "api_document_url" => "http://document.preprod.manakin.fr",
+        "s3_container" => "legalib-preprod",
         "site_url" => "https://app.preprod.legalib.org",
         "environnement" => "Preprod",
         "api_key" => "API_PREPROD",
@@ -147,6 +149,12 @@ function reloadFront($env) {
         $api_document_state = false;
     }
 
+    if ($current_env->filestackContainer === $env['s3_container']){
+        $s3_container = true;
+    } else {
+        $s3_container = false;
+    }
+
     $data = array(
         "tile" => "fancy_listing",
         "key" => $env['key'],
@@ -163,12 +171,16 @@ function reloadFront($env) {
                 array(
                     "label" => "apiDocumentUrl: ",
                     "text" => $current_env->apiDocumentUrl
+                ),
+                array(
+                    "label" => "s3_container: ",
+                    "text" => $current_env->filestackContainer
                 )
             )
         )
     );
 
-    $states = array($state, $api_state, $api_document_state);
+    $states = array($state, $api_state, $api_document_state, $s3_container);
 
     updateData($data);
     setConfig("fancy_listing", $states, $env);
