@@ -3,6 +3,7 @@ $postdata = json_decode(file_get_contents("php://input"), true);
 if ($postdata['env'] === "production") {
     $env = array(
         "api_url" => "https://api.legalib.org",
+        "api_document_url" => "http://document.manakin.fr",
         "site_url" => "https://legalib.org",
         "environnement" => "Production",
         "api_key" => "API",
@@ -13,6 +14,7 @@ if ($postdata['env'] === "production") {
 } else {
     $env = array(
         "api_url" => "https://api.preprod.legalib.org",
+        "api_document_url" => "http://document.preprod.manakin.fr",
         "site_url" => "https://app.preprod.legalib.org",
         "environnement" => "Preprod",
         "api_key" => "API_PREPROD",
@@ -118,12 +120,12 @@ function reloadFront($env) {
     curl_close($ch);
 
     if ($httpcode === 200) {
-        $state = "UP";
+        $state = true;
     } else {
-        $state = "DOWN";
+        $state = false;
     }
 
-    $ch = curl_init($env['site_url'] . 'env.json');
+    $ch = curl_init($env['site_url'] . '/env.json');
     curl_setopt($ch, CURLOPT_CUSTOMREQUEST, "GET");
     curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
     curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, true);
@@ -134,25 +136,39 @@ function reloadFront($env) {
     $current_env = json_decode($result);
 
     if ($current_env->apiBaseUrl === $env['api_url']){
-        echo "ok";
+        $api_state = true;
     } else {
-        echo "not ok";
+        $api_state = false;
     }
-    print_r($result);
+
+    if ($current_env->apiDocumentUrl === $env['api_document_url']){
+        $api_document_state = true;
+    } else {
+        $api_document_state = false;
+    }
 
     $data = array(
-        "tile" => "just_value",
+        "tile" => "fancy_listing",
         "key" => $env['key'],
         "data" =>json_encode(
             array(
-                "title"=> "Etat du front",
-                "description"=> $env['environnement'],
-                "just-value" => $state
+                array(
+                    "label" => "Etat du front",
+                    "text" => $state ? "OK" : "Not OK"
+                ),
+                array(
+                    "label" => "apiBaseUrl",
+                    "text" => $current_env->apiBaseUrl
+                ),
+                array(
+                    "label" => "apiDocumentUrl",
+                    "text" => $current_env->apiDocumentUrl
+                )
             )
         )
     );
     updateData($data);
-    setConfig($state, $env);
+    //setConfig($state, $env);
 }
 
 function reloadInfo($env) {
