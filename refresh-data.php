@@ -2,8 +2,8 @@
 $postdata = json_decode(file_get_contents("php://input"), true);
 if ($postdata['env'] === "production") {
     $env = array(
-        "api_url" => "https://api.legalib.org/",
-        "site_url" => "https://legalib.org/",
+        "api_url" => "https://api.legalib.org",
+        "site_url" => "https://legalib.org",
         "environnement" => "Production",
         "api_key" => "API",
         "db_key" => "DATABASE",
@@ -12,8 +12,8 @@ if ($postdata['env'] === "production") {
     );
 } else {
     $env = array(
-        "api_url" => "https://api.preprod.legalib.org/",
-        "site_url" => "https://app.preprod.legalib.org/",
+        "api_url" => "https://api.preprod.legalib.org",
+        "site_url" => "https://app.preprod.legalib.org",
         "environnement" => "Preprod",
         "api_key" => "API_PREPROD",
         "db_key" => "DATABASE_PREPROD",
@@ -45,7 +45,7 @@ switch ($postdata['tile']) {
 }
 
 function reloadAPI($env) {
-    $ch = curl_init($env['api_url'] . "ping/api");
+    $ch = curl_init($env['api_url'] . "/ping/api");
     curl_setopt($ch, CURLOPT_CUSTOMREQUEST, "GET");
     curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
     curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, true);
@@ -76,7 +76,7 @@ function reloadAPI($env) {
 }
 
 function reloadDatabase($env) {
-    $ch = curl_init($env['api_url'] . "ping/db");
+    $ch = curl_init($env['api_url'] . "/ping/db");
     curl_setopt($ch, CURLOPT_CUSTOMREQUEST, "GET");
     curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
     curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, true);
@@ -123,6 +123,23 @@ function reloadFront($env) {
         $state = "DOWN";
     }
 
+    $ch = curl_init($env['site_url'] . 'env.json');
+    curl_setopt($ch, CURLOPT_CUSTOMREQUEST, "GET");
+    curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+    curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, true);
+    curl_setopt($ch, CURLOPT_SSL_VERIFYHOST, 2);
+    curl_setopt($ch, CURLOPT_HEADER, false);
+    $result = curl_exec($ch);
+    curl_close($ch);
+    $current_env = json_decode($result);
+
+    if ($current_env->apiBaseUrl === $env['api_url']){
+        echo "ok";
+    } else {
+        echo "not ok";
+    }
+    print_r($result);
+
     $data = array(
         "tile" => "just_value",
         "key" => $env['key'],
@@ -139,7 +156,7 @@ function reloadFront($env) {
 }
 
 function reloadInfo($env) {
-    $ch = curl_init($env['api_url'] . "info");
+    $ch = curl_init($env['api_url'] . "/info");
     curl_setopt($ch, CURLOPT_CUSTOMREQUEST, "GET");
     curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
     curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, true);
