@@ -212,7 +212,7 @@ function reloadInfo($env, $info) {
             array(
                 array(
 
-                    "label" => "Dernier commit: ",
+                    "label" => "Commit: ",
                     "text" => $info['commit']
                 ),
                 array(
@@ -224,7 +224,7 @@ function reloadInfo($env, $info) {
                     "text" => $info['branch']
                 ),
                 array(
-                    "label" => "Date de déploiement: ",
+                    "label" => "Déploiement: ",
                     "text" => date("d/m/Y H:i:s")
                 )
             )
@@ -272,9 +272,14 @@ function setConfig($template, $states, $env) {
         $value = array(
             "vertical_center" => true
         );
-
-        foreach ($states as $key => $state) {
-            $value[$key + 1] = $state ? array("label_color"=> "green", "center"=> true) : array("label_color"=> "red", "center"=> true);
+        if ($env['key'] === "INFO" || $env['key'] === "INFO_PREPROD") {
+            foreach ($states as $key => $state) {
+                $value[$key + 1] = array("label_color"=> "blue", "center"=> true);
+            }
+        } else {
+            foreach ($states as $key => $state) {
+                $value[$key + 1] = $state ? array("label_color"=> "green", "center"=> true) : array("label_color"=> "red", "center"=> true);
+            }
         }
 
         $value = json_encode($value);
