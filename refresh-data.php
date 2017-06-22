@@ -1,4 +1,5 @@
 <?php
+date_default_timezone_set('Europe/Paris');
 $postdata = json_decode(file_get_contents("php://input"), true);
 $info = array(
     "commit" => $postdata['commit'] ? $postdata['commit'] : "Inconnu",
