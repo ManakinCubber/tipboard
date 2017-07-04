@@ -21,7 +21,7 @@ if ($postdata['env'] === "production") {
 } else {
     $env = array(
         "api_url" => "https://api.preprod.legalib.org",
-        "api_document_url" => "http://document.preprod.manakin.fr",
+        "api_document_url" => "https://document.preprod.manakin.fr",
         "s3_container" => "legalib-preprod",
         "site_url" => "https://app.preprod.legalib.org",
         "environnement" => "Preprod",
