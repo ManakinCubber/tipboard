@@ -1,12 +1,11 @@
 <?php
 date_default_timezone_set('Europe/Paris');
-$postdata = json_decode(file_get_contents("php://input"), true);
 $info = array(
-    "commit" => $postdata['commit'] ? $postdata['commit'] : "Inconnu",
-    "branch" => $postdata['branch'] ? $postdata['branch'] : "Inconnu",
-    "user" => $postdata['user'] ? $postdata['user'] : "Inconnu",
+    "commit" => $_GET['commit'] ? $_GET['commit'] : "Inconnu",
+    "branch" => $_GET['branch'] ? $_GET['branch'] : "Inconnu",
+    "user" => $_GET['user'] ? $_GET['user'] : "Inconnu",
 );
-if ($postdata['env'] === "production") {
+if ($_GET['env'] === "production") {
     $env = array(
         "api_url" => "https://api.legalib.org",
         "api_document_url" => "http://document.manakin.fr",
@@ -32,7 +31,7 @@ if ($postdata['env'] === "production") {
     );
 }
 
-switch ($postdata['tile']) {
+switch ($_GET['tile']) {
     case 'API':
         $env['key'] = $env['api_key'];
         reloadAPI($env);
