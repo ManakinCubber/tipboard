@@ -2,7 +2,6 @@
 date_default_timezone_set('Europe/Paris');
 $info = array(
     "commit" => $_GET['commit'] ? $_GET['commit'] : "Inconnu",
-    "branch" => $_GET['branch'] ? $_GET['branch'] : "Inconnu",
     "user" => $_GET['user'] ? $_GET['user'] : "Inconnu",
 );
 if ($_GET['env'] === "production") {
@@ -218,10 +217,6 @@ function reloadInfo($env, $info) {
                 array(
                     "label" => "Utilisateur: ",
                     "text" => $info['user']
-                ),
-                array(
-                    "label" => "Branche: ",
-                    "text" => $info['branch']
                 ),
                 array(
                     "label" => "Déploiement: ",
