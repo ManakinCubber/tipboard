@@ -8,7 +8,7 @@ $info = array(
 if ($_GET['env'] === "production") {
     $env = array(
         "api_url" => "https://api.legalib.org",
-        "api_document_url" => "http://document.manakin.fr",
+        "api_document_url" => "https://document.manakin.fr",
         "s3_container" => "legalib",
         "site_url" => "https://legalib.org",
         "environnement" => "Production",
