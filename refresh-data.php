@@ -8,7 +8,7 @@ if ($_GET['env'] === "production") {
     $env = array(
         "api_url" => "https://api.pepit.co",
         "api_document_url" => "https://document.manakin.fr",
-        "s3_container" => "pepit",
+        "s3_container" => "pepit-prod",
         "site_url" => "https://pepit.co",
         "environnement" => "Production",
         "api_key" => "API",
