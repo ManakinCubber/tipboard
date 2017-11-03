@@ -6,10 +6,10 @@ $info = array(
 );
 if ($_GET['env'] === "production") {
     $env = array(
-        "api_url" => "https://api.legalib.org",
+        "api_url" => "https://api.pepit.co",
         "api_document_url" => "https://document.manakin.fr",
-        "s3_container" => "legalib",
-        "site_url" => "https://legalib.org",
+        "s3_container" => "pepit",
+        "site_url" => "https://pepit.co",
         "environnement" => "Production",
         "api_key" => "API",
         "db_key" => "DATABASE",
@@ -18,10 +18,10 @@ if ($_GET['env'] === "production") {
     );
 } else {
     $env = array(
-        "api_url" => "https://api.preprod.legalib.org",
+        "api_url" => "https://api.preprod.pepit.co",
         "api_document_url" => "https://document.preprod.manakin.fr",
-        "s3_container" => "legalib-preprod",
-        "site_url" => "https://app.preprod.legalib.org",
+        "s3_container" => "pepit-preprod",
+        "site_url" => "https://app.preprod.pepit.co",
         "environnement" => "Preprod",
         "api_key" => "API_PREPROD",
         "db_key" => "DATABASE_PREPROD",
@@ -233,7 +233,7 @@ function reloadInfo($env, $info) {
 }
 
 function updateData($data_received) {
-    $ch = curl_init("http://dash.legalib.org:7272/api/v0.1/1523223fdfa24d6489b0d9b623e697a7/push");
+    $ch = curl_init("http://dash.pepit.co:7272/api/v0.1/1523223fdfa24d6489b0d9b623e697a7/push");
     curl_setopt($ch, CURLOPT_CUSTOMREQUEST, "POST");
     curl_setopt($ch, CURLOPT_POSTFIELDS, http_build_query($data_received));
     curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
@@ -283,7 +283,7 @@ function setConfig($template, $states, $env) {
         );
     }
 
-    $ch = curl_init("http://dash.legalib.org:7272/api/v0.1/1523223fdfa24d6489b0d9b623e697a7/tileconfig/" . $env['key']);
+    $ch = curl_init("http://dash.pepit.co:7272/api/v0.1/1523223fdfa24d6489b0d9b623e697a7/tileconfig/" . $env['key']);
     curl_setopt($ch, CURLOPT_CUSTOMREQUEST, "POST");
     curl_setopt($ch, CURLOPT_POSTFIELDS, http_build_query($data));
     curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
