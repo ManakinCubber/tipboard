@@ -1,0 +1,52 @@
+details:
+    page_title: Legalib Dashboard
+layout:
+    - row_1_of_2:
+        - col_1_of_4:
+            - tile_template: just_value
+              tile_id: API
+              title: API
+              classes:
+
+        - col_1_of_4:
+            - tile_template: just_value
+              tile_id: DATABASE
+              title: DATABASE
+              classes:
+
+        - col_1_of_4:
+            - tile_template: just_value
+              tile_id: FRONT
+              title: FRONT
+              classes:
+
+        - col_1_of_4:
+            - tile_template: text
+              tile_id: INFO
+              title: INFO 
+              classes:
+
+    - row_1_of_2:
+        - col_1_of_4:
+            - tile_template: just_value
+              tile_id: API_PREPROD
+              title: API PREPROD
+              classes:
+
+        - col_1_of_4:
+            - tile_template: just_value
+              tile_id: DATABASE_PREPROD
+              title: DATABASE_PREPROD
+              classes:
+
+        - col_1_of_4:
+            - tile_template: just_value
+              tile_id: FRONT_PREPROD
+              title: FRONT_PREPROD
+              classes:
+
+        - col_1_of_4:
+            - tile_template: text
+              tile_id: INFO_PREPROD
+              title: INFO_PREPROD
+              classes:
